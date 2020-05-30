@@ -42,11 +42,7 @@ namespace LibGit2Sharp.Core
                     string nativeLibraryPath = GetGlobalSettingsNativeLibraryPath();
                     if (nativeLibraryPath != null)
                     {
-#if NETFRAMEWORK
-                        if (Platform.OperatingSystem == OperatingSystemType.Windows)
-#else
                         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-#endif
                         {
                             LoadWindowsLibrary(nativeLibraryPath);
                         }
@@ -146,8 +142,6 @@ namespace LibGit2Sharp.Core
                     return handle;
                 }
 
-#if NETFRAMEWORK
-#else
                 // We cary a number of .so files for Linux which are linked against various
                 // libc/OpenSSL libraries. Try them out.
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -170,7 +164,6 @@ namespace LibGit2Sharp.Core
                         }
                     }
                 }
-#endif
             }
             return handle;
         }

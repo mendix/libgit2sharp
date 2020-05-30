@@ -71,20 +71,13 @@ namespace LibGit2Sharp
         /// Returns information related to the current LibGit2Sharp
         /// library.
         /// </summary>
-        public static Version Version
-        {
-            get
-            {
-                return version.Value;
-            }
-        }
+        public static Version Version => version.Value;
 
         /// <summary>
         /// Registers a new <see cref="SmartSubtransport"/> as a custom
-        /// smart-protocol transport with libgit2.  Any Git remote with
+        /// smart-protocol transport with libgit2. Any Git remote with
         /// the scheme registered will delegate to the given transport
-        /// for all communication with the server.  use this transport to communicate
-        /// with the server This is not commonly
+        /// for all communication with the server. This is not commonly
         /// used: some callers may want to re-use an existing connection to
         /// perform fetch / push operations to a remote.
         ///
