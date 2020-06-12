@@ -128,6 +128,8 @@ namespace LibGit2Sharp.Core
                     { GitErrorCode.LockedFile, (m, c) => new LockedFileException(m, c) },
                     { GitErrorCode.NotFound, (m, c) => new NotFoundException(m, c) },
                     { GitErrorCode.Peel, (m, c) => new PeelException(m, c) },
+                    { GitErrorCode.Auth, (m, c) => new AuthenticationException(m, c)  },
+                    { GitErrorCode.Certificate, (m, c) => new ServerCertificateInvalidException(m, c)  },
                 };
 
         private static unsafe void HandleError(int result)
