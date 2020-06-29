@@ -128,8 +128,18 @@ namespace LibGit2Sharp.Core
                     { GitErrorCode.LockedFile, (m, c) => new LockedFileException(m, c) },
                     { GitErrorCode.NotFound, (m, c) => new NotFoundException(m, c) },
                     { GitErrorCode.Peel, (m, c) => new PeelException(m, c) },
-                    { GitErrorCode.Auth, (m, c) => new AuthenticationException(m, c)  },
-                    { GitErrorCode.Certificate, (m, c) => new ServerCertificateInvalidException(m, c)  },
+                    { GitErrorCode.Auth, (m, c) => new AuthenticationException(m, c) },
+                    { GitErrorCode.Certificate, (m, c) => new ServerCertificateInvalidException(m, c) },
+                    { GitErrorCode.OrphanedHead, (m, c) => new OrphanedHeadException(m, c) },
+                    { GitErrorCode.Applied, (m, c) => new PatchOrMergeAlreadyAppliedException(m, c) },
+                    { GitErrorCode.Modified, (m, c) => new ReferenceValueDoesNotMatchException(m, c) },
+                    { GitErrorCode.Uncommitted, (m, c) => new UncommittedChangesException(m, c) },
+                    { GitErrorCode.EndOfFile, (m, c) => new EndOfFileException(m, c) },
+                    { GitErrorCode.Directory, (m, c) => new CannotPerformOnDirectoryException(m, c) },
+                    { GitErrorCode.MergeConflict, (m, c) => new MergeConflictException(m, c) },
+                    { GitErrorCode.PassThrough, (m, c) => new PassThroughException(m, c) },
+                    { GitErrorCode.IterOver, (m, c) => new GitIndexOutOfRangeException(m, c) },
+                    { GitErrorCode.Mismatch, (m, c) => new ObjectHasUnexpectedIdException(m, c) },
                 };
 
         private static unsafe void HandleError(int result)
