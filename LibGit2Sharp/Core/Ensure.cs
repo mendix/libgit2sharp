@@ -135,7 +135,6 @@ namespace LibGit2Sharp.Core
                     { GitErrorCode.Modified, (m, c) => new ReferenceValueDoesNotMatchException(m, c) },
                     { GitErrorCode.Uncommitted, (m, c) => new UncommittedChangesException(m, c) },
                     { GitErrorCode.EndOfFile, (m, c) => new EndOfFileException(m, c) },
-                    { GitErrorCode.Directory, (m, c) => new CannotPerformOnDirectoryException(m, c) },
                     { GitErrorCode.MergeConflict, (m, c) => new MergeConflictException(m, c) },
                     { GitErrorCode.PassThrough, (m, c) => new PassThroughException(m, c) },
                     { GitErrorCode.IterOver, (m, c) => new GitIndexOutOfRangeException(m, c) },
