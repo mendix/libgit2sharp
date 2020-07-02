@@ -1,8 +1,18 @@
 ﻿namespace LibGit2Sharp.Core
 {
-    internal enum GitErrorCode
+    /// <summary>
+    /// Git Error Code contains a list of possible error codes returned by LibGit2
+    /// </summary>
+    public enum GitErrorCode
     {
+        /// <summary>
+        /// No Error result OK
+        /// </summary>
         Ok = 0,
+
+        /// <summary>
+        /// General Error
+        /// </summary>
         Error = -1,
 
         /// <summary>

@@ -52,5 +52,24 @@ namespace LibGit2Sharp
         protected LibGit2SharpException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         { }
+
+        internal LibGit2SharpException(string message, GitErrorCode code, GitErrorCategory category) : this(message)
+        {
+            Data.Add("libgit2.code", (int)code);
+            Data.Add("libgit2.category", (int)category);
+
+            Code = code;
+            Category = category;
+        }
+
+        /// <summary>
+        /// The underlying GitErrorCode returned by LibGit2
+        /// </summary>
+        public GitErrorCode Code { get; private set; }
+
+        /// <summary>
+        /// The underlying Error Category returned by LibGit2
+        /// </summary>
+        public GitErrorCategory Category { get; private set; }
     }
 }
