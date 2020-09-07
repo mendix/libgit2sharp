@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>LibGit2Sharp</id>
+    <version>1.0.1-mx</version>
+    <authors>LibGit2Sharp contributors</authors>
+    <owners>mendix</owners>
+    <licenseUrl>https://raw.githubusercontent.com/libgit2/libgit2/master/COPYING</licenseUrl>
+    <projectUrl>https://github.com/libgit2/libgit2sharp.nativebinaries</projectUrl>
+    <repository url="https://github.com/mendix/libgit2sharp.git" type="git"/>
+    <iconUrl>https://raw.githubusercontent.com/libgit2/libgit2sharp/master/square-logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>LibGit2Sharp brings all the might and speed of libgit2, a native Git implementation, to the managed world of .Net and Mono.</description>
+  </metadata>
+</package>
