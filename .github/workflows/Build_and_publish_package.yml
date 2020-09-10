@@ -1,0 +1,35 @@
+name: Build and Deploy Packages
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  PACKAGE_VER: 1.0.1-mx
+  BUILD_TYPE: Release
+  NUGETTOKEN: ${{ secrets.NUGET_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+    - name: Update Gitversioning
+      run: |
+        dotnet tool install --tool-path . nbgv
+        .\nbgv cloud
+    - name: Build & Deploy Package
+      # Build project using powershell script
+      run: |
+        dotnet build -c Release
+        nuget pack .\nuget.package\Mendix_package.nuspec  -Version 1.0.1-mx -NoPackageAnalysis
+        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/MarcellvanRooyen/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
+        nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
+    
+     
