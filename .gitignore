@@ -37,7 +37,7 @@ _ReSharper*/
 *.swp
 *.DotSettings
 nuget.package/lib/
-nuget.pacakge/App_Readme/
+nuget.package/App_Readme/
 
 _NCrunch_LibGit2Sharp/
 packages/

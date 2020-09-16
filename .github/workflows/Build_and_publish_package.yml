@@ -17,11 +17,8 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
-    # Add tool nbgv for build support
-    - name: Update Gitversioning
-      run: |
-        dotnet tool install --tool-path . nbgv
-        .\nbgv cloud
+    - uses: dotnet/nbgv@master
+      id: nbgv        
     # Build and deploy nuget package
     - name: Build & Deploy Package
       run: |
