@@ -11,29 +11,34 @@ jobs:
     # well on Windows or Mac.  You can convert this to a matrix build if you need
     # cross-platform coverage.
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
+    
     runs-on: windows-latest
-
     steps:
+    # Checkout repo into build area
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+    # install nbgv please check https://github.com/dotnet/Nerdbank.GitVersioning for more info about nbgv
     - uses: dotnet/nbgv@master
       id: nbgv        
-      
+    # we make sure that all necessary folders are in the package output folder  
     - name: Setup folder structure
       run: |
         mkdir ".\nuget.package\lib\net46"
         mkdir ".\nuget.package\lib\netstandard2.0"
-      shell: powershell
+      shell: powershell #Keep as powershell and not pwsh
     # Build and deploy nuget package
     - name: Build & Deploy Package
       run: |
+      # We include the GitHub package source so that we can reference current packages and also so that we can push to the package repo
         nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
         dotnet build -c Release
+      # After build we copy the binaries to package output folder
         copy .\bin\LibGit2Sharp\Release\net46\*.* .\nuget.package\lib\net46\ -Force
         copy .\bin\LibGit2Sharp\Release\netstandard2.0\*.* .\nuget.package\lib\netstandard2.0\ -Force
+      # Finally we pack and push the package to github packages        
         nuget pack .\nuget.package\Mendix_package.nuspec  -Version 1.101.4 -NoPackageAnalysis
         nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
-      shell: powershell
+      shell: powershell #Keep as powershell and not pwsh
     
      
