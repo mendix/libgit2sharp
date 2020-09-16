@@ -19,12 +19,13 @@ jobs:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
     - uses: dotnet/nbgv@master
       id: nbgv        
+      
     # Build and deploy nuget package
     - name: Build & Deploy Package
       run: |
-        dotnet build -c Release
-        nuget pack .\nuget.package\Mendix_package.nuspec  -Version 1.0.1-mx -NoPackageAnalysis
         nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/MarcellvanRooyen/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
+        dotnet build -c Release
+        nuget pack .\nuget.package\Mendix_package.nuspec  -Version 1.101.1 -NoPackageAnalysis
         nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
     
      
