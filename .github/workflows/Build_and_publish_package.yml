@@ -23,8 +23,7 @@ jobs:
     # Build and deploy nuget package
     - name: Build & Deploy Package
       run: |
-        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/MarcellvanRooyen/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
-        nuget restore -Source "GitHub"
+        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
         dotnet build -c Release
         nuget pack .\nuget.package\Mendix_package.nuspec  -Version 1.101.1 -NoPackageAnalysis
         nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
