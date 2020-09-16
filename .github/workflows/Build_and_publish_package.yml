@@ -21,7 +21,7 @@ jobs:
       id: nbgv        
       
     - name: Setup folder structure
-      run:|
+      run: |
         mkdir ".\nuget.package\lib\net46"
         mkdir ".\nuget.package\lib\netstandard2.0"
       shell: powershell
