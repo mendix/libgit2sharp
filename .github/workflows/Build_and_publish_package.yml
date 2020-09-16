@@ -22,8 +22,8 @@ jobs:
       
     - name: Setup folder structure
       run:|
-        mkdir .\nuget.package\lib\net46
-        mkdir .\nuget.package\lib\netstandard2.0
+        mkdir ".\nuget.package\lib\net46"
+        mkdir ".\nuget.package\lib\netstandard2.0"
       shell: powershell
     # Build and deploy nuget package
     - name: Build & Deploy Package
