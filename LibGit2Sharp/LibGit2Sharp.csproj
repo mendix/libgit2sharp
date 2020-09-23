@@ -18,7 +18,6 @@
     <AssemblyOriginatorKeyFile>..\libgit2sharp.snk</AssemblyOriginatorKeyFile>
     <PackageIcon>square-logo.png</PackageIcon>
     <PackageLicenseFile>App_Readme/LICENSE.md</PackageLicenseFile>
-    <UserSecretsId>cdd90144-8692-4d6d-bb35-66e4947ab673</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
