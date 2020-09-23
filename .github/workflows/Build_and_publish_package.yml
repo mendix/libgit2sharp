@@ -35,7 +35,7 @@ jobs:
       run: |
         nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
         dotnet build -c Release
-        nuget pack .\nuget.package\Mendix_package.nuspec  -Version 1.101.4 -NoPackageAnalysis
+        nuget pack .\nuget.package\Mendix_package.nuspec  -Version 1.101.1 -NoPackageAnalysis
         nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
       shell: powershell #Keep as powershell and not pwsh
     
