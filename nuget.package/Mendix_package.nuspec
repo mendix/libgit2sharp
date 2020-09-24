@@ -13,12 +13,12 @@
     <description>LibGit2Sharp brings all the might and speed of libgit2, a native Git implementation, to the managed world of .Net and Mono.</description>
   </metadata>
   <files>
-	<file src="..bin/LibGit2Sharp/Release/net46/LibGit2Sharp.dll" target="../nuget.package/lib/net46/LibGit2Sharp.dll" />
-	<file src="..bin/LibGit2Sharp/Release/net46/LibGit2Sharp.pdb" target="../nuget.package/lib/net46/LibGit2Sharp.pdb" />
-	<file src="..bin/LibGit2Sharp/Release/net46/LibGit2Sharp.xml" target="../nuget.package/lib/net46/LibGit2Sharp.xml" />
-	<file src="..bin/LibGit2Sharp/Release/netstandard2.0/LibGit2Sharp.dll" target="../nuget.package/lib/netstandard2.0/LibGit2Sharp.dll" />
-	<file src="..bin/LibGit2Sharp/Release/netstandard2.0/LibGit2Sharp.pdb" target="../nuget.package/lib/netstandard2.0/LibGit2Sharp.pdb" />
-	<file src="..bin/LibGit2Sharp/Release/netstandard2.0/LibGit2Sharp.xml" target="../nuget.package/lib/netstandard2.0/LibGit2Sharp.xml" />
+	<file src="../bin/LibGit2Sharp/Release/net46/LibGit2Sharp.dll" target="../nuget.package/lib/net46/LibGit2Sharp.dll" />
+	<file src="../bin/LibGit2Sharp/Release/net46/LibGit2Sharp.pdb" target="../nuget.package/lib/net46/LibGit2Sharp.pdb" />
+	<file src="../bin/LibGit2Sharp/Release/net46/LibGit2Sharp.xml" target="../nuget.package/lib/net46/LibGit2Sharp.xml" />
+	<file src="../bin/LibGit2Sharp/Release/netstandard2.0/LibGit2Sharp.dll" target="../nuget.package/lib/netstandard2.0/LibGit2Sharp.dll" />
+	<file src="../bin/LibGit2Sharp/Release/netstandard2.0/LibGit2Sharp.pdb" target="../nuget.package/lib/netstandard2.0/LibGit2Sharp.pdb" />
+	<file src="../bin/LibGit2Sharp/Release/netstandard2.0/LibGit2Sharp.xml" target="../nuget.package/lib/netstandard2.0/LibGit2Sharp.xml" />
 	<file src="./LICENSE.md" target="../nuget.package/App_Readme/LICENSE.md/" />
   </files>
 </package>
