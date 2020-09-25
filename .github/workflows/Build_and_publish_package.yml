@@ -1,0 +1,42 @@
+name: Build and Deploy Packages
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    # Currently we build LibGit2Sharp for Windows only
+    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
+    runs-on: windows-2019
+
+    steps:
+    # Checkout repo into build area
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # avoid shallow clone so Nerdbank.GitVersioning can do its work.
+
+    # Build and deploy nuget package
+    # We include the GitHub package source so that we can reference current packages and also so that we can push to the package repo
+    - name: Build Project and Package
+      run: |
+        dotnet nuget add source "https://nuget.pkg.github.com/mendix/index.json" --name "GitHub" --username ${{ secrets.GHPACKAGESUSER }} --password ${{ secrets.GHPACKAGESTOKEN }}
+        dotnet pack --configuration Release --output "mx_nuget" -p:PublicRelease=true LibGit2Sharp/LibGit2Sharp.csproj
+      shell: powershell #Keep as powershell and not pwsh
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: nuget package
+        path: ${{ github.workspace }}/**/*.nupkg
+
+    # After build we copy the binaries to package output folder
+    # Finally we pack and push the package to github packages
+    - name: Deploy Package
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        dotnet nuget add source "https://nuget.pkg.github.com/mendix/index.json" --name "GitHub" --username ${{ secrets.GHPACKAGESUSER }} --password ${{ secrets.GHPACKAGESTOKEN }}
+        dotnet nuget push "**/mx_nuget/Mendix.LibGit2Sharp*.nupkg" --source "GitHub" --skip-duplicate
+      shell: powershell #Keep as powershell and not pwsh
