@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
@@ -15,11 +15,12 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\libgit2sharp.snk</AssemblyOriginatorKeyFile>
     <PackageIcon>square-logo.png</PackageIcon>
-    <PackageReadmeFile>App_Readme/README.md</PackageReadmeFile>
     <PackageLicenseFile>App_Readme/LICENSE.md</PackageLicenseFile>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <MinVerDefaultPreReleaseIdentifiers>preview.0</MinVerDefaultPreReleaseIdentifiers>
     <MinVerBuildMetadata Condition="'$(libgit2_hash)' != ''">libgit2-$(libgit2_hash.Substring(0,7))</MinVerBuildMetadata>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Mendix.LibGit2Sharp</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,19 +34,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="[2.0.320]" PrivateAssets="none" />
+    <PackageReference Include="Mendix.LibGit2Sharp.NativeBinaries" Version="[1.164.0]" PrivateAssets="none" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
     <PackageReference Include="MinVer" Version="4.3.0" PrivateAssets="all" />
   </ItemGroup>
 
   <Import Project="..\Targets\CodeGenerator.targets" />
   <Import Project="..\Targets\GenerateNativeDllName.targets" />
-
-  <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
-    <PropertyGroup>
-      <PackageReleaseNotes>https://github.com/libgit2/libgit2sharp/blob/$(SourceRevisionId)/CHANGES.md</PackageReleaseNotes>
-    </PropertyGroup>
-  </Target>
 
   <Target Name="AdjustVersions" AfterTargets="MinVer">
     <PropertyGroup>
