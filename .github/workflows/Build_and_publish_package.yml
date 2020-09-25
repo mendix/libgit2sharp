@@ -1,6 +1,9 @@
 name: Build and Deploy Packages
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -30,7 +33,7 @@ jobs:
       run: |
         nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
         dotnet build -c Release
-        nuget pack .\mx_nuget.package\Mendix_package.nuspec  -Version 1.101.3 -NoPackageAnalysis
+        nuget pack .\mx_nuget.package\Mendix_package.nuspec  -Version 1.101.10 -NoPackageAnalysis
       shell: powershell #Keep as powershell and not pwsh
       
     - name: Upload build artifacts
@@ -41,11 +44,9 @@ jobs:
 
     # After build we copy the binaries to package output folder
     # Finally we pack and push the package to github packages 
-#    - name: Deploy Package
-#      run: |
-#        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
-#        nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
-#      shell: powershell #Keep as powershell and not pwsh
+    - name: Deploy Package
+      run: |
+        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
+        nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
+      shell: powershell #Keep as powershell and not pwsh
       
-    
-     
