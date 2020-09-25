@@ -1,9 +1,6 @@
 name: Build and Deploy Packages
 
-on:
-  push:
-    branches:
-      - master
+on: [push]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -39,16 +36,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: nuget package
-        path: ${{ github.workspace }}/**/*.nupkg      
-
-    # After build we copy the binaries to package output folder
-    # Finally we pack and push the package to github packages 
-    - name: Deploy Package
-      run: |
-        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName MarcellVanRooyen -Password ${{ secrets.GHPACKAGESTOKEN }}
-        nuget pack .\mx_nuget.package\Mendix_package.nuspec  -Version 1.101.3 -NoPackageAnalysis
-        nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
-      shell: powershell #Keep as powershell and not pwsh
-      
-    
-     
+        path: ${{ github.workspace }}/**/*.nupkg
