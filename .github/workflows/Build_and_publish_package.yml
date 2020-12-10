@@ -7,8 +7,7 @@ on:
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: 'Release'
-  NUPKG_VERSION: '1.110.1'
+  BUILD_TYPE: Release
 
 jobs:
   build:
@@ -24,17 +23,12 @@ jobs:
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
-    # install nbgv please check https://github.com/dotnet/Nerdbank.GitVersioning for more info about nbgv
-    - uses: dotnet/nbgv@master
-      id: nbgv
-
     # Build and deploy nuget package
     # We include the GitHub package source so that we can reference current packages and also so that we can push to the package repo
     - name: Build Project and Package
       run: |
-        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName ${{ secrets.GHPACKAGESUSER }} -Password ${{ secrets.GHPACKAGESTOKEN }}
-        dotnet build -c Release
-        nuget pack .\mx_nuget.package\Mendix_package.nuspec  -Version ${{ env.NUPKG_VERSION }}  -NoPackageAnalysis
+        dotnet nuget add source "https://nuget.pkg.github.com/mendix/index.json" --name "GitHub" --username ${{ secrets.GHPACKAGESUSER }} --password ${{ secrets.GHPACKAGESTOKEN }}
+        dotnet pack --configuration Release --output "mx_nuget" LibGit2Sharp/LibGit2Sharp.csproj
       shell: powershell #Keep as powershell and not pwsh
 
     - name: Upload build artifacts
@@ -47,6 +41,6 @@ jobs:
     # Finally we pack and push the package to github packages
     - name: Deploy Package
       run: |
-        nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/mendix/index.json" -UserName ${{ secrets.GHPACKAGESUSER }} -Password ${{ secrets.GHPACKAGESTOKEN }}
-        nuget push **/Mendix.LibGit2Sharp*.nupkg -Source "GitHub" -SkipDuplicate
+        dotnet nuget add source "https://nuget.pkg.github.com/mendix/index.json" --name "GitHub" --username ${{ secrets.GHPACKAGESUSER }} --password ${{ secrets.GHPACKAGESTOKEN }}
+        dotnet nuget push "mx_nuget/Mendix.LibGit2Sharp*.nupkg" --source "GitHub" --skip-duplicate
       shell: powershell #Keep as powershell and not pwsh
