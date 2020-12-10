@@ -41,16 +41,6 @@
   <Import Project="..\Targets\CodeGenerator.targets" />
   <Import Project="..\Targets\GenerateNativeDllName.targets" />
 
-  <!--
-  <Target Name="SetNuSpecProperties" BeforeTargets="GenerateNuspec" DependsOnTargets="GetBuildVersion">
-    <PropertyGroup>
-      <PackageIconUrl>https://github.com/libgit2/libgit2sharp/raw/$(GitCommitIdShort)/square-logo.png</PackageIconUrl>
-      <PackageReleaseNotes>https://github.com/libgit2/libgit2sharp/blob/$(GitCommitIdShort)/CHANGES.md#libgit2sharp-changes</PackageReleaseNotes>
-      <PackageLicenseUrl>https://github.com/libgit2/libgit2sharp/raw/$(GitCommitIdShort)/LICENSE.md</PackageLicenseUrl>
-    </PropertyGroup>
-  </Target>
-  -->
-
   <Target Name="SetNuSpecProperties" BeforeTargets="GenerateNuspec" DependsOnTargets="GetBuildVersion">
     <PropertyGroup>
       <PackageIconUrl>https://raw.githubusercontent.com/mendix/libgit2sharp/master/square-logo.png</PackageIconUrl>
