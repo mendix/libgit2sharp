@@ -51,4 +51,11 @@
   </Target>
   -->
 
+  <Target Name="SetNuSpecProperties" BeforeTargets="GenerateNuspec" DependsOnTargets="GetBuildVersion">
+    <PropertyGroup>
+      <PackageIconUrl>https://raw.githubusercontent.com/mendix/libgit2sharp/master/square-logo.png</PackageIconUrl>
+      <PackageLicenseUrl>https://raw.githubusercontent.com/mendix/libgit2sharp/master/LICENSE.md</PackageLicenseUrl>
+    </PropertyGroup>
+  </Target>
+
 </Project>
