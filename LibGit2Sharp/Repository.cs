@@ -656,7 +656,24 @@ namespace LibGit2Sharp
         /// <returns>The references in the remote repository.</returns>
         public static IEnumerable<Reference> ListRemoteReferences(string url)
         {
-            return ListRemoteReferences(url, null);
+            string _defaultBranch;
+            return ListRemoteReferences(url, null, out _defaultBranch);
+        }
+
+        /// <summary>
+        /// Lists the Remote Repository References.
+        /// </summary>
+        /// <para>
+        /// Does not require a local Repository. The retrieved
+        /// <see cref="IBelongToARepository.Repository"/>
+        /// throws <see cref="InvalidOperationException"/> in this case.
+        /// </para>
+        /// <param name="url">The url to list from.</param>
+        /// <param name="defaultBranch">The name of the Repository's default branch.</param>
+        /// <returns>The references in the remote repository.</returns>
+        public static IEnumerable<Reference> ListRemoteReferences(string url, out string defaultBranch)
+        {
+            return ListRemoteReferences(url, null, out defaultBranch);
         }
 
         /// <summary>
@@ -671,6 +688,24 @@ namespace LibGit2Sharp
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
         /// <returns>The references in the remote repository.</returns>
         public static IEnumerable<Reference> ListRemoteReferences(string url, CredentialsHandler credentialsProvider)
+        {
+            string _defaultBranch;
+            return ListRemoteReferences(url, credentialsProvider, out _defaultBranch);
+        }
+
+        /// <summary>
+        /// Lists the Remote Repository References.
+        /// </summary>
+        /// <para>
+        /// Does not require a local Repository. The retrieved
+        /// <see cref="IBelongToARepository.Repository"/>
+        /// throws <see cref="InvalidOperationException"/> in this case.
+        /// </para>
+        /// <param name="url">The url to list from.</param>
+        /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <param name="defaultBranch">The name of the Repository's default branch.</param>
+        /// <returns>The references in the remote repository.</returns>
+        public static IEnumerable<Reference> ListRemoteReferences(string url, CredentialsHandler credentialsProvider, out string defaultBranch)
         {
             Ensure.ArgumentNotNull(url, "url");
 
@@ -687,6 +722,8 @@ namespace LibGit2Sharp
                 }
 
                 Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks, ref proxyOptions);
+
+                defaultBranch = Proxy.git_remote_default_branch(remoteHandle);
                 return Proxy.git_remote_ls(null, remoteHandle);
             }
         }

@@ -2167,6 +2167,17 @@ namespace LibGit2Sharp.Core
             }
         }
 
+        public static unsafe string git_remote_default_branch(RemoteHandle remote)
+        {
+            using (var buf = new GitBuf())
+            {
+                int res = NativeMethods.git_remote_default_branch(buf, remote);
+                Ensure.ZeroResult(res);
+
+                return LaxUtf8Marshaler.FromNative(buf.ptr);
+            }
+        }
+
         public static unsafe void git_remote_delete(RepositoryHandle repo, string name)
         {
             int res = NativeMethods.git_remote_delete(repo, name);
