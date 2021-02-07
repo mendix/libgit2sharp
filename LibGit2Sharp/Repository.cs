@@ -723,8 +723,10 @@ namespace LibGit2Sharp
 
                 Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks, ref proxyOptions);
 
+                var remoteReferences = Proxy.git_remote_ls(null, remoteHandle);
                 defaultBranch = Proxy.git_remote_default_branch(remoteHandle);
-                return Proxy.git_remote_ls(null, remoteHandle);
+
+                return remoteReferences;
             }
         }
 
