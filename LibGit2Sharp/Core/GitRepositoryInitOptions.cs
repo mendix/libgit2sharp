@@ -36,6 +36,11 @@ namespace LibGit2Sharp.Core
                 opts.Flags |= GitRepositoryInitFlags.GIT_REPOSITORY_INIT_BARE;
             }
 
+            if (initOptions.InitialHead != null)
+            {
+                opts.InitialHead = StrictUtf8Marshaler.FromManaged(initOptions.InitialHead);
+            }
+
             return opts;
         }
 
@@ -43,6 +48,9 @@ namespace LibGit2Sharp.Core
         {
             EncodingMarshaler.Cleanup(WorkDirPath);
             WorkDirPath = IntPtr.Zero;
+
+            EncodingMarshaler.Cleanup(InitialHead);
+            InitialHead = IntPtr.Zero;
         }
     }
 
