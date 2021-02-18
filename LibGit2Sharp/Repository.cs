@@ -495,7 +495,8 @@ namespace LibGit2Sharp
         {
             Ensure.ArgumentNotNullOrEmptyString(path, "path");
 
-            using (RepositoryHandle repo = Proxy.git_repository_init_ext(null, path, isBare))
+            using (var opts = GitRepositoryInitOptions.BuildFrom(null, isBare))
+            using (RepositoryHandle repo = Proxy.git_repository_init_ext(path, opts))
             {
                 FilePath repoPath = Proxy.git_repository_path(repo);
                 return repoPath.Native;
@@ -520,7 +521,8 @@ namespace LibGit2Sharp
 
             // TODO: Shouldn't we ensure that the working folder isn't under the gitDir?
 
-            using (RepositoryHandle repo = Proxy.git_repository_init_ext(wd, gitDirectoryPath, false))
+            using (var opts = GitRepositoryInitOptions.BuildFrom(wd, false))
+            using (RepositoryHandle repo = Proxy.git_repository_init_ext(gitDirectoryPath, opts))
             {
                 FilePath repoPath = Proxy.git_repository_path(repo);
                 return repoPath.Native;
