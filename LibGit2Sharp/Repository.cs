@@ -496,13 +496,8 @@ namespace LibGit2Sharp
             Ensure.ArgumentNotNullOrEmptyString(path, "path");
 
             var initOptions = new InitOptions { IsBare = isBare };
-
-            using (var opts = GitRepositoryInitOptions.BuildFrom(initOptions))
-            using (RepositoryHandle repo = Proxy.git_repository_init_ext(path, opts))
-            {
-                FilePath repoPath = Proxy.git_repository_path(repo);
-                return repoPath.Native;
-            }
+            
+            return Init(path, initOptions);
         }
 
         /// <summary>
@@ -525,8 +520,24 @@ namespace LibGit2Sharp
 
             // TODO: Shouldn't we ensure that the working folder isn't under the gitDir?
 
-            using (var opts = GitRepositoryInitOptions.BuildFrom(initOptions))
-            using (RepositoryHandle repo = Proxy.git_repository_init_ext(gitDirectoryPath, opts))
+            return Init(gitDirectoryPath, initOptions);
+        }
+
+        /// <summary>
+        /// Initialize a repository at the specified <paramref name="path"/>,
+        /// providing optional behavioral overrides through the <paramref name="options"/> parameter.
+        /// </summary>
+        /// <param name="path">The path to the working folder when initializing a standard ".git" repository. Otherwise, when initializing a bare repository, the path to the expected location of this later.</param>
+        /// <param name="options">Options controlling init behavior.</param>
+        /// <returns>The path to the created repository.</returns>
+        public static string Init(string path, InitOptions options)
+        {
+            Ensure.ArgumentNotNullOrEmptyString(path, "path");
+            
+            options = options ?? new InitOptions();
+
+            using (var opts = GitRepositoryInitOptions.BuildFrom(options))
+            using (RepositoryHandle repo = Proxy.git_repository_init_ext(path, opts))
             {
                 FilePath repoPath = Proxy.git_repository_path(repo);
                 return repoPath.Native;
