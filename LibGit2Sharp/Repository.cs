@@ -495,11 +495,9 @@ namespace LibGit2Sharp
         {
             Ensure.ArgumentNotNullOrEmptyString(path, "path");
 
-            using (RepositoryHandle repo = Proxy.git_repository_init_ext(null, path, isBare))
-            {
-                FilePath repoPath = Proxy.git_repository_path(repo);
-                return repoPath.Native;
-            }
+            var initOptions = new InitOptions { IsBare = isBare };
+            
+            return Init(path, initOptions);
         }
 
         /// <summary>
@@ -518,9 +516,28 @@ namespace LibGit2Sharp
             // to pass a path relatively to his current directory.
             string wd = Path.GetFullPath(workingDirectoryPath);
 
+            var initOptions = new InitOptions { WorkdirPath = wd };
+
             // TODO: Shouldn't we ensure that the working folder isn't under the gitDir?
 
-            using (RepositoryHandle repo = Proxy.git_repository_init_ext(wd, gitDirectoryPath, false))
+            return Init(gitDirectoryPath, initOptions);
+        }
+
+        /// <summary>
+        /// Initialize a repository at the specified <paramref name="path"/>,
+        /// providing optional behavioral overrides through the <paramref name="options"/> parameter.
+        /// </summary>
+        /// <param name="path">The path to the working folder when initializing a standard ".git" repository. Otherwise, when initializing a bare repository, the path to the expected location of this later.</param>
+        /// <param name="options">Options controlling init behavior.</param>
+        /// <returns>The path to the created repository.</returns>
+        public static string Init(string path, InitOptions options)
+        {
+            Ensure.ArgumentNotNullOrEmptyString(path, "path");
+            
+            options = options ?? new InitOptions();
+
+            using (var opts = GitRepositoryInitOptions.BuildFrom(options))
+            using (RepositoryHandle repo = Proxy.git_repository_init_ext(path, opts))
             {
                 FilePath repoPath = Proxy.git_repository_path(repo);
                 return repoPath.Native;
@@ -656,7 +673,24 @@ namespace LibGit2Sharp
         /// <returns>The references in the remote repository.</returns>
         public static IEnumerable<Reference> ListRemoteReferences(string url)
         {
-            return ListRemoteReferences(url, null);
+            string _defaultBranch;
+            return ListRemoteReferences(url, null, out _defaultBranch);
+        }
+
+        /// <summary>
+        /// Lists the Remote Repository References.
+        /// </summary>
+        /// <para>
+        /// Does not require a local Repository. The retrieved
+        /// <see cref="IBelongToARepository.Repository"/>
+        /// throws <see cref="InvalidOperationException"/> in this case.
+        /// </para>
+        /// <param name="url">The url to list from.</param>
+        /// <param name="defaultBranch">The name of the Repository's default branch.</param>
+        /// <returns>The references in the remote repository.</returns>
+        public static IEnumerable<Reference> ListRemoteReferences(string url, out string defaultBranch)
+        {
+            return ListRemoteReferences(url, null, out defaultBranch);
         }
 
         /// <summary>
@@ -671,6 +705,24 @@ namespace LibGit2Sharp
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
         /// <returns>The references in the remote repository.</returns>
         public static IEnumerable<Reference> ListRemoteReferences(string url, CredentialsHandler credentialsProvider)
+        {
+            string _defaultBranch;
+            return ListRemoteReferences(url, credentialsProvider, out _defaultBranch);
+        }
+
+        /// <summary>
+        /// Lists the Remote Repository References.
+        /// </summary>
+        /// <para>
+        /// Does not require a local Repository. The retrieved
+        /// <see cref="IBelongToARepository.Repository"/>
+        /// throws <see cref="InvalidOperationException"/> in this case.
+        /// </para>
+        /// <param name="url">The url to list from.</param>
+        /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <param name="defaultBranch">The name of the Repository's default branch.</param>
+        /// <returns>The references in the remote repository.</returns>
+        public static IEnumerable<Reference> ListRemoteReferences(string url, CredentialsHandler credentialsProvider, out string defaultBranch)
         {
             Ensure.ArgumentNotNull(url, "url");
 
@@ -687,7 +739,11 @@ namespace LibGit2Sharp
                 }
 
                 Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks, ref proxyOptions);
-                return Proxy.git_remote_ls(null, remoteHandle);
+
+                var remoteReferences = Proxy.git_remote_ls(null, remoteHandle);
+                defaultBranch = Proxy.git_remote_default_branch(remoteHandle);
+
+                return remoteReferences;
             }
         }
 
