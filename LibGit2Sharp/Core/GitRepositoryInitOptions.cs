@@ -24,6 +24,11 @@ namespace LibGit2Sharp.Core
                 Mode = 0  /* GIT_REPOSITORY_INIT_SHARED_UMASK  */
             };
 
+            if (initOptions == null)
+            {
+                return opts;
+            }
+
             if (initOptions.WorkdirPath != null)
             {
                 Debug.Assert(!initOptions.IsBare);
