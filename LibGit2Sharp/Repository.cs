@@ -673,24 +673,7 @@ namespace LibGit2Sharp
         /// <returns>The references in the remote repository.</returns>
         public static IEnumerable<Reference> ListRemoteReferences(string url)
         {
-            string _defaultBranch;
-            return ListRemoteReferences(url, null, out _defaultBranch);
-        }
-
-        /// <summary>
-        /// Lists the Remote Repository References.
-        /// </summary>
-        /// <para>
-        /// Does not require a local Repository. The retrieved
-        /// <see cref="IBelongToARepository.Repository"/>
-        /// throws <see cref="InvalidOperationException"/> in this case.
-        /// </para>
-        /// <param name="url">The url to list from.</param>
-        /// <param name="defaultBranch">The name of the Repository's default branch.</param>
-        /// <returns>The references in the remote repository.</returns>
-        public static IEnumerable<Reference> ListRemoteReferences(string url, out string defaultBranch)
-        {
-            return ListRemoteReferences(url, null, out defaultBranch);
+            return ListRemoteReferences(url, null);
         }
 
         /// <summary>
@@ -706,8 +689,13 @@ namespace LibGit2Sharp
         /// <returns>The references in the remote repository.</returns>
         public static IEnumerable<Reference> ListRemoteReferences(string url, CredentialsHandler credentialsProvider)
         {
-            string _defaultBranch;
-            return ListRemoteReferences(url, credentialsProvider, out _defaultBranch);
+            Ensure.ArgumentNotNull(url, "url");
+
+            using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
+            using (RemoteHandle remoteHandle = Proxy.git_remote_create_anonymous(repositoryHandle, url))
+            {
+                return ListRemoteReferences(remoteHandle, credentialsProvider);
+            }
         }
 
         /// <summary>
@@ -729,22 +717,27 @@ namespace LibGit2Sharp
             using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
             using (RemoteHandle remoteHandle = Proxy.git_remote_create_anonymous(repositoryHandle, url))
             {
-                var gitCallbacks = new GitRemoteCallbacks { version = 1 };
-                var proxyOptions = new GitProxyOptions { Version = 1 };
-
-                if (credentialsProvider != null)
-                {
-                    var callbacks = new RemoteCallbacks(credentialsProvider);
-                    gitCallbacks = callbacks.GenerateCallbacks();
-                }
-
-                Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks, ref proxyOptions);
-
-                var remoteReferences = Proxy.git_remote_ls(null, remoteHandle);
                 defaultBranch = Proxy.git_remote_default_branch(remoteHandle);
-
-                return remoteReferences;
+                return ListRemoteReferences(remoteHandle, credentialsProvider);
             }
+        }
+
+        /// <summary>
+        /// Lists the Remote Repository References.
+        /// </summary>
+        private static IEnumerable<Reference> ListRemoteReferences(RemoteHandle remoteHandle, CredentialsHandler credentialsProvider)
+        {
+            var gitCallbacks = new GitRemoteCallbacks { version = 1 };
+            var proxyOptions = new GitProxyOptions { Version = 1 };
+
+            if (credentialsProvider != null)
+            {
+                var callbacks = new RemoteCallbacks(credentialsProvider);
+                gitCallbacks = callbacks.GenerateCallbacks();
+            }
+
+            Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks, ref proxyOptions);
+            return Proxy.git_remote_ls(null, remoteHandle);
         }
 
         /// <summary>
