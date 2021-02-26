@@ -717,8 +717,9 @@ namespace LibGit2Sharp
             using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
             using (RemoteHandle remoteHandle = Proxy.git_remote_create_anonymous(repositoryHandle, url))
             {
+                var remoteRefs = ListRemoteReferences(remoteHandle, credentialsProvider);
                 defaultBranch = Proxy.git_remote_default_branch(remoteHandle);
-                return ListRemoteReferences(remoteHandle, credentialsProvider);
+                return remoteRefs;
             }
         }
 
