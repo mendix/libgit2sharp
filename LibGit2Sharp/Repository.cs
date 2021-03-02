@@ -495,11 +495,9 @@ namespace LibGit2Sharp
         {
             Ensure.ArgumentNotNullOrEmptyString(path, "path");
 
-            using (RepositoryHandle repo = Proxy.git_repository_init_ext(null, path, isBare))
-            {
-                FilePath repoPath = Proxy.git_repository_path(repo);
-                return repoPath.Native;
-            }
+            var initOptions = new InitOptions { IsBare = isBare };
+            
+            return Init(path, initOptions);
         }
 
         /// <summary>
@@ -518,9 +516,28 @@ namespace LibGit2Sharp
             // to pass a path relatively to his current directory.
             string wd = Path.GetFullPath(workingDirectoryPath);
 
+            var initOptions = new InitOptions { WorkdirPath = wd };
+
             // TODO: Shouldn't we ensure that the working folder isn't under the gitDir?
 
-            using (RepositoryHandle repo = Proxy.git_repository_init_ext(wd, gitDirectoryPath, false))
+            return Init(gitDirectoryPath, initOptions);
+        }
+
+        /// <summary>
+        /// Initialize a repository at the specified <paramref name="path"/>,
+        /// providing optional behavioral overrides through the <paramref name="options"/> parameter.
+        /// </summary>
+        /// <param name="path">The path to the working folder when initializing a standard ".git" repository. Otherwise, when initializing a bare repository, the path to the expected location of this later.</param>
+        /// <param name="options">Options controlling init behavior.</param>
+        /// <returns>The path to the created repository.</returns>
+        public static string Init(string path, InitOptions options)
+        {
+            Ensure.ArgumentNotNullOrEmptyString(path, "path");
+            
+            options = options ?? new InitOptions();
+
+            using (var opts = GitRepositoryInitOptions.BuildFrom(options))
+            using (RepositoryHandle repo = Proxy.git_repository_init_ext(path, opts))
             {
                 FilePath repoPath = Proxy.git_repository_path(repo);
                 return repoPath.Native;
@@ -675,20 +692,45 @@ namespace LibGit2Sharp
             Ensure.ArgumentNotNull(url, "url");
 
             using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
-            using (RemoteHandle remoteHandle = Proxy.git_remote_create_anonymous(repositoryHandle, url))
+            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider))
             {
-                var gitCallbacks = new GitRemoteCallbacks { version = 1 };
-                var proxyOptions = new GitProxyOptions { Version = 1 };
-
-                if (credentialsProvider != null)
-                {
-                    var callbacks = new RemoteCallbacks(credentialsProvider);
-                    gitCallbacks = callbacks.GenerateCallbacks();
-                }
-
-                Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks, ref proxyOptions);
                 return Proxy.git_remote_ls(null, remoteHandle);
             }
+        }
+
+        /// <summary>
+        /// Retrieves the name of the Remote Repository's default branch.
+        /// </summary>
+        /// <param name="url">The url to retrieve from.</param>
+        /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <returns>The reference name.</returns>
+        public static string GetRemoteDefaultBranch(string url, CredentialsHandler credentialsProvider)
+        {
+            Ensure.ArgumentNotNull(url, "url");
+
+            using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
+            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider))
+            {
+                return Proxy.git_remote_default_branch(remoteHandle);
+            }
+        }
+
+        private static RemoteHandle ConnectToAnonymousRemote(RepositoryHandle repositoryHandle, string url, CredentialsHandler credentialsProvider)
+        {
+            RemoteHandle remoteHandle = Proxy.git_remote_create_anonymous(repositoryHandle, url);
+
+            var gitCallbacks = new GitRemoteCallbacks { version = 1 };
+            var proxyOptions = new GitProxyOptions { Version = 1 };
+
+            if (credentialsProvider != null)
+            {
+                var callbacks = new RemoteCallbacks(credentialsProvider);
+                gitCallbacks = callbacks.GenerateCallbacks();
+            }
+
+            Proxy.git_remote_connect(remoteHandle, GitDirection.Fetch, ref gitCallbacks, ref proxyOptions);
+
+            return remoteHandle;
         }
 
         /// <summary>
