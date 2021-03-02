@@ -16,7 +16,7 @@ namespace LibGit2Sharp.Core
         public IntPtr InitialHead;
         public IntPtr OriginUrl;
 
-        public static GitRepositoryInitOptions BuildFrom(FilePath workdirPath, bool isBare)
+        public static GitRepositoryInitOptions BuildFrom(InitOptions initOptions)
         {
             var opts = new GitRepositoryInitOptions
             {
@@ -24,16 +24,26 @@ namespace LibGit2Sharp.Core
                 Mode = 0  /* GIT_REPOSITORY_INIT_SHARED_UMASK  */
             };
 
-            if (workdirPath != null)
+            if (initOptions == null)
             {
-                Debug.Assert(!isBare);
-
-                opts.WorkDirPath = StrictFilePathMarshaler.FromManaged(workdirPath);
+                return opts;
             }
 
-            if (isBare)
+            if (initOptions.WorkdirPath != null)
+            {
+                Debug.Assert(!initOptions.IsBare);
+
+                opts.WorkDirPath = StrictFilePathMarshaler.FromManaged(initOptions.WorkdirPath);
+            }
+
+            if (initOptions.IsBare)
             {
                 opts.Flags |= GitRepositoryInitFlags.GIT_REPOSITORY_INIT_BARE;
+            }
+
+            if (initOptions.InitialHead != null)
+            {
+                opts.InitialHead = StrictUtf8Marshaler.FromManaged(initOptions.InitialHead);
             }
 
             return opts;
@@ -43,6 +53,9 @@ namespace LibGit2Sharp.Core
         {
             EncodingMarshaler.Cleanup(WorkDirPath);
             WorkDirPath = IntPtr.Zero;
+
+            EncodingMarshaler.Cleanup(InitialHead);
+            InitialHead = IntPtr.Zero;
         }
     }
 
