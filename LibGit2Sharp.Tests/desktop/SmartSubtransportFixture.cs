@@ -63,7 +63,7 @@ namespace LibGit2Sharp.Tests
                     // Perform the actual fetch
                     Commands.Fetch(repo, remoteName, new string[0],
                         new FetchOptions { OnUpdateTips = expectedFetchState.RemoteUpdateTipsHandler, TagFetchMode = TagFetchMode.Auto },
-                    null);
+                    null, new ProxyOptions());
 
                     // Verify the expected
                     expectedFetchState.CheckUpdatedReferences(repo);
