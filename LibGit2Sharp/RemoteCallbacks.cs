@@ -12,10 +12,15 @@ namespace LibGit2Sharp
     /// </summary>
     internal class RemoteCallbacks
     {
-        internal RemoteCallbacks(CredentialsHandler credentialsProvider)
+        internal RemoteCallbacks(CredentialsHandler credentialsProvider, CertificateCheckHandler certificateCheck)
         {
             CredentialsProvider = credentialsProvider;
+            CertificateCheck = certificateCheck;
         }
+
+        internal RemoteCallbacks(CredentialsHandler credentialsProvider)
+            : this(credentialsProvider, null)
+        { }
 
         internal RemoteCallbacks(PushOptions pushOptions)
         {

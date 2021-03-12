@@ -81,7 +81,8 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="name">The name of the submodule to update.</param>
         /// <param name="options">Options controlling submodule udpate behavior and callbacks.</param>
-        public virtual void Update(string name, SubmoduleUpdateOptions options)
+        /// <param name="proxy">Options controlling proxy settings.</param>
+        public virtual void Update(string name, SubmoduleUpdateOptions options, ProxyOptions proxy)
         {
             options = options ?? new SubmoduleUpdateOptions();
 
@@ -94,6 +95,7 @@ namespace LibGit2Sharp
                 }
 
                 using (GitCheckoutOptsWrapper checkoutOptionsWrapper = new GitCheckoutOptsWrapper(options))
+                using (GitProxyOptionsWrapper proxyOptionsWrapper = new GitProxyOptionsWrapper(proxy))
                 {
                     var gitCheckoutOptions = checkoutOptionsWrapper.Options;
 
@@ -104,7 +106,11 @@ namespace LibGit2Sharp
                     {
                         Version = 1,
                         CheckoutOptions = gitCheckoutOptions,
-                        FetchOptions = new GitFetchOptions { ProxyOptions = new GitProxyOptions { Version = 1 }, RemoteCallbacks = gitRemoteCallbacks },
+                        FetchOptions = new GitFetchOptions
+                        {
+                            ProxyOptions = proxyOptionsWrapper.GitProxyOptions,
+                            RemoteCallbacks = gitRemoteCallbacks
+                        },
                         CloneCheckoutStrategy = CheckoutStrategy.GIT_CHECKOUT_SAFE
                     };
 

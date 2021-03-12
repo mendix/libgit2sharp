@@ -43,7 +43,7 @@ namespace LibGit2Sharp.Tests
         {
             var scd = BuildSelfCleaningDirectory();
 
-            string clonedRepoPath = Repository.Clone(BareTestRepoPath, scd.DirectoryPath, new CloneOptions { BranchName = branchName });
+            string clonedRepoPath = Repository.Clone(BareTestRepoPath, scd.DirectoryPath, new CloneOptions { BranchName = branchName }, new ProxyOptions());
 
             using (var repo = new Repository(clonedRepoPath))
             {
@@ -107,7 +107,7 @@ namespace LibGit2Sharp.Tests
             string clonedRepoPath = Repository.Clone(url, scd.DirectoryPath, new CloneOptions
             {
                 IsBare = true
-            });
+            }, new ProxyOptions());
 
             using (var repo = new Repository(clonedRepoPath))
             {
@@ -130,7 +130,7 @@ namespace LibGit2Sharp.Tests
             string clonedRepoPath = Repository.Clone(url, scd.DirectoryPath, new CloneOptions()
             {
                 Checkout = false
-            });
+            }, new ProxyOptions());
 
             using (var repo = new Repository(clonedRepoPath))
             {
@@ -155,7 +155,7 @@ namespace LibGit2Sharp.Tests
                 OnProgress = progress => { progressWasCalled = true; return true; },
                 OnUpdateTips = (name, oldId, newId) => { updateTipsWasCalled = true; return true; },
                 OnCheckoutProgress = (a, b, c) => checkoutWasCalled = true
-            });
+            }, new ProxyOptions());
 
             Assert.True(transferWasCalled);
             Assert.True(progressWasCalled);
@@ -175,7 +175,7 @@ namespace LibGit2Sharp.Tests
                 new CloneOptions()
                 {
                     CredentialsProvider = Constants.PrivateRepoCredentials
-                });
+                }, new ProxyOptions());
 
 
             using (var repo = new Repository(clonedRepoPath))
@@ -289,7 +289,7 @@ namespace LibGit2Sharp.Tests
             };
 
             Assert.Throws<UserCancelledException>(() =>
-                Repository.Clone(url, scd.DirectoryPath, options)
+                Repository.Clone(url, scd.DirectoryPath, options, new ProxyOptions())
             );
 
             Assert.True(wasCalled);
@@ -437,7 +437,7 @@ namespace LibGit2Sharp.Tests
                 RepositoryOperationCompleted = repositoryOperationCompleted,
             };
 
-            string clonedRepoPath = Repository.Clone(uri.AbsolutePath, scd.DirectoryPath, options);
+            string clonedRepoPath = Repository.Clone(uri.AbsolutePath, scd.DirectoryPath, options, new ProxyOptions());
             string workDirPath;
 
             using (Repository repo = new Repository(clonedRepoPath))
@@ -521,7 +521,7 @@ namespace LibGit2Sharp.Tests
             };
 
             Assert.Throws<UserCancelledException>(() =>
-                Repository.Clone(uri.AbsolutePath, scd.DirectoryPath, options));
+                Repository.Clone(uri.AbsolutePath, scd.DirectoryPath, options, new ProxyOptions()));
 
             // Cancel after super repository is cloned, but before submodule is cloned.
             cancelDepth = 1;
@@ -530,7 +530,7 @@ namespace LibGit2Sharp.Tests
 
             try
             {
-                Repository.Clone(uri.AbsolutePath, scd.DirectoryPath, options);
+                Repository.Clone(uri.AbsolutePath, scd.DirectoryPath, options, new ProxyOptions());
             }
             catch (RecurseSubmodulesException ex)
             {
@@ -562,7 +562,7 @@ namespace LibGit2Sharp.Tests
                 FetchOptions = new FetchOptions { CustomHeaders = new String[] { knownHeader } }
             };
 
-            Assert.Throws<LibGit2SharpException>(() => Repository.Clone(url, scd.DirectoryPath, cloneOptions));
+            Assert.Throws<LibGit2SharpException>(() => Repository.Clone(url, scd.DirectoryPath, cloneOptions, new ProxyOptions()));
         }
 
         [Fact]
@@ -578,7 +578,7 @@ namespace LibGit2Sharp.Tests
                 FetchOptions = new FetchOptions { CustomHeaders = new String[] { knownHeader } }
             };
 
-            Assert.Throws<LibGit2SharpException>(() => Repository.Clone(url, scd.DirectoryPath, cloneOptions));
+            Assert.Throws<LibGit2SharpException>(() => Repository.Clone(url, scd.DirectoryPath, cloneOptions, new ProxyOptions()));
         }
 
         [Fact]
@@ -594,7 +594,7 @@ namespace LibGit2Sharp.Tests
                 FetchOptions = new FetchOptions { CustomHeaders = new String[] { knownHeader } }
             };
 
-            var clonedRepoPath = Repository.Clone(url, scd.DirectoryPath, cloneOptions);
+            var clonedRepoPath = Repository.Clone(url, scd.DirectoryPath, cloneOptions, new ProxyOptions());
             Assert.True(Directory.Exists(clonedRepoPath));
         }
     }
