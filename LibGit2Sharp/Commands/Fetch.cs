@@ -29,18 +29,19 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="repository">The repository in which to fetch.</param>
         /// <param name="remote">The remote to fetch from. Either as a remote name or a URL</param>
+        /// <param name="refspecs">List of refspecs to apply as active.</param>
         /// <param name="options">Fetch options.</param>
         /// <param name="logMessage">Log message for any ref updates.</param>
-        /// <param name="refspecs">List of refspecs to apply as active.</param>
-        public static void Fetch(Repository repository, string remote, IEnumerable<string> refspecs, FetchOptions options, string logMessage)
+        /// <param name="proxy">Proxy options.</param>
+        public static void Fetch(Repository repository, string remote, IEnumerable<string> refspecs, FetchOptions options, string logMessage, ProxyOptions proxy)
         {
             Ensure.ArgumentNotNull(remote, "remote");
 
             options = options ?? new FetchOptions();
             using (var remoteHandle = RemoteFromNameOrUrl(repository.Handle, remote))
             using (var fetchOptionsWrapper = new GitFetchOptionsWrapper())
+            using (var proxyOptionsWrapper = new GitProxyOptionsWrapper(proxy))
             {
-
                 var callbacks = new RemoteCallbacks(options);
                 GitRemoteCallbacks gitCallbacks = callbacks.GenerateCallbacks();
 
@@ -75,7 +76,7 @@ namespace LibGit2Sharp
                     fetchOptions.CustomHeaders = GitStrArrayManaged.BuildFrom(options.CustomHeaders);
                 }
 
-                fetchOptions.ProxyOptions = new GitProxyOptions { Version = 1 };
+                fetchOptions.ProxyOptions = proxyOptionsWrapper.GitProxyOptions;
 
                 Proxy.git_remote_fetch(remoteHandle, refspecs, fetchOptions, logMessage);
             }

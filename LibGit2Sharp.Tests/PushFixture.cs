@@ -75,7 +75,7 @@ namespace LibGit2Sharp.Tests
                 OnPackBuilderProgress = packBuilderCb,
             };
 
-            AssertPush(repo => repo.Network.Push(repo.Network.Remotes["origin"], "HEAD", @"refs/heads/master", options));
+            AssertPush(repo => repo.Network.Push(repo.Network.Remotes["origin"], "HEAD", @"refs/heads/master", options, new ProxyOptions()));
             Assert.True(packBuilderCalled);
         }
 
@@ -102,7 +102,7 @@ namespace LibGit2Sharp.Tests
                 OnNegotiationCompletedBeforePush = prePushHook,
             };
 
-            AssertPush(repo => repo.Network.Push(repo.Network.Remotes["origin"], "HEAD", @"refs/heads/master", options));
+            AssertPush(repo => repo.Network.Push(repo.Network.Remotes["origin"], "HEAD", @"refs/heads/master", options, new ProxyOptions()));
             Assert.True(packBuilderCalled);
             Assert.True(prePushHandlerCalled);
         }
@@ -130,7 +130,7 @@ namespace LibGit2Sharp.Tests
                 OnNegotiationCompletedBeforePush = prePushHook
             };
 
-            Assert.Throws<UserCancelledException>(() => { AssertPush(repo => repo.Network.Push(repo.Network.Remotes["origin"], "HEAD", @"refs/heads/master", options)); });
+            Assert.Throws<UserCancelledException>(() => { AssertPush(repo => repo.Network.Push(repo.Network.Remotes["origin"], "HEAD", @"refs/heads/master", options, new ProxyOptions())); });
 
             Assert.False(packBuilderCalled);
             Assert.True(prePushHandlerCalled);

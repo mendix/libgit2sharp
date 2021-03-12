@@ -15,7 +15,8 @@ namespace LibGit2Sharp
         /// <param name="repository">The repository.</param>
         /// <param name="merger">The signature to use for the merge.</param>
         /// <param name="options">The options for fetch and merging.</param>
-        public static MergeResult Pull(Repository repository, Signature merger, PullOptions options)
+        /// <param name="proxy">The options for proxy settings.</param>
+        public static MergeResult Pull(Repository repository, Signature merger, PullOptions options, ProxyOptions proxy)
         {
             Ensure.ArgumentNotNull(repository, "repository");
             Ensure.ArgumentNotNull(merger, "merger");
@@ -34,7 +35,7 @@ namespace LibGit2Sharp
                 throw new LibGit2SharpException("No upstream remote for the current branch.");
             }
 
-            Commands.Fetch(repository, currentBranch.RemoteName, new string[0], options.FetchOptions, null);
+            Commands.Fetch(repository, currentBranch.RemoteName, new string[0], options.FetchOptions, null, proxy);
             return repository.MergeFetchedRefs(merger, options.MergeOptions);
         }
     }

@@ -215,7 +215,7 @@ namespace LibGit2Sharp.Tests
                 Assert.NotNull(submodule);
                 Assert.True(submodule.RetrieveStatus().HasFlag(SubmoduleStatus.WorkDirUninitialized));
 
-                Assert.Throws<LibGit2SharpException>(() => repo.Submodules.Update(submodule.Name, new SubmoduleUpdateOptions()));
+                Assert.Throws<LibGit2SharpException>(() => repo.Submodules.Update(submodule.Name, new SubmoduleUpdateOptions(), new ProxyOptions()));
             }
         }
 
@@ -244,7 +244,7 @@ namespace LibGit2Sharp.Tests
                 };
 
                 repo.Submodules.Init(submodule.Name, false);
-                repo.Submodules.Update(submodule.Name, options);
+                repo.Submodules.Update(submodule.Name, options, new ProxyOptions());
 
                 Assert.True(submodule.RetrieveStatus().HasFlag(SubmoduleStatus.InWorkDir));
                 Assert.True(checkoutProgressCalled);
@@ -269,7 +269,7 @@ namespace LibGit2Sharp.Tests
                 Assert.NotNull(submodule);
                 Assert.True(submodule.RetrieveStatus().HasFlag(SubmoduleStatus.WorkDirUninitialized));
 
-                repo.Submodules.Update(submodule.Name, new SubmoduleUpdateOptions() { Init = true });
+                repo.Submodules.Update(submodule.Name, new SubmoduleUpdateOptions() { Init = true }, new ProxyOptions());
 
                 Assert.True(submodule.RetrieveStatus().HasFlag(SubmoduleStatus.InWorkDir));
                 Assert.Equal((ObjectId)"480095882d281ed676fe5b863569520e54a7d5c0", submodule.HeadCommitId);
@@ -292,7 +292,7 @@ namespace LibGit2Sharp.Tests
                 Assert.True(submodule.RetrieveStatus().HasFlag(SubmoduleStatus.WorkDirUninitialized));
 
                 repo.Submodules.Init(submodule.Name, false);
-                repo.Submodules.Update(submodule.Name, new SubmoduleUpdateOptions());
+                repo.Submodules.Update(submodule.Name, new SubmoduleUpdateOptions(), new ProxyOptions());
 
                 Assert.True(submodule.RetrieveStatus().HasFlag(SubmoduleStatus.InWorkDir));
 
@@ -305,7 +305,7 @@ namespace LibGit2Sharp.Tests
                 Assert.Equal((ObjectId)"5e4963595a9774b90524d35a807169049de8ccad", submodule.IndexCommitId);
                 Assert.Equal((ObjectId)"480095882d281ed676fe5b863569520e54a7d5c0", submodule.WorkDirCommitId);
 
-                repo.Submodules.Update(submodule.Name, new SubmoduleUpdateOptions());
+                repo.Submodules.Update(submodule.Name, new SubmoduleUpdateOptions(), new ProxyOptions());
                 submodule = repo.Submodules[submoduleName];
 
                 Assert.Equal((ObjectId)"5e4963595a9774b90524d35a807169049de8ccad", submodule.HeadCommitId);
