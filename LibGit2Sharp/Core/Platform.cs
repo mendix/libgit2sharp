@@ -12,7 +12,28 @@ namespace LibGit2Sharp.Core
 
     internal static class Platform
     {
-        public static string ProcessorArchitecture => IntPtr.Size == 8 ? "x64" : "x86";
+        public static string ProcessorArchitecture
+        {
+            get
+            {
+                if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
+                {
+                    return "x86";
+                }
+
+                if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
+                {
+                    return "x64";
+                }
+
+                if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                {
+                    return "arm64";
+                }
+
+                throw new PlatformNotSupportedException();
+            }
+        }
 
         public static OperatingSystemType OperatingSystem
         {

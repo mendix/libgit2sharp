@@ -159,7 +159,7 @@ namespace LibGit2Sharp
         /// <summary>
         /// Sets a path for loading native binaries on .NET Framework or .NET Core.
         /// When specified, native library will first be searched under the given path.
-        /// On .NET Framework a subdirectory corresponding to the architecture  ("x86" or "x64") is appended,
+        /// On .NET Framework a subdirectory corresponding to the architecture  ("x86", "x64" or "arm64") is appended,
         /// otherwise the native library is expected to be found in the directory as specified.
         ///
         /// If the library is not found it will be searched in standard search paths:
