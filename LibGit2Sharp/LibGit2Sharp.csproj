@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net46</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>LibGit2Sharp brings all the might and speed of libgit2, a native Git implementation, to the managed world of .Net and Mono.</Description>
     <Company>LibGit2Sharp contributors</Company>
@@ -14,6 +14,8 @@
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\libgit2sharp.snk</AssemblyOriginatorKeyFile>
+    <PackageIcon>square-logo.png</PackageIcon>
+    <PackageLicenseFile>App_Readme/LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -22,30 +24,22 @@
 
   <ItemGroup>
     <CodeAnalysisDictionary Include="CustomDictionary.xml" />
-    <None Include="Core\Handles\Objects.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Objects.cs</LastGenOutput>
-    </None>
-    <None Include="..\README.md" Pack="true" PackagePath="App_Readme\" />
-    <None Include="..\LICENSE.md" Pack="true" PackagePath="App_Readme\" />
-    <None Include="..\CHANGES.md" Pack="true" PackagePath="App_Readme\" />
-    <Compile Update="Core\Handles\Objects.cs" DependentUpon="Objects.tt" />
+    <None Include="..\square-logo.png" Pack="true" PackagePath="" />
+    <None Include="..\README.md" Pack="true" PackagePath="App_Readme/" />
+    <None Include="..\LICENSE.md" Pack="true" PackagePath="App_Readme/" />
+    <None Include="..\CHANGES.md" Pack="true" PackagePath="App_Readme/" />
+    <None Update="Core\Handles\Objects.tt" Generator="TextTemplatingFileGenerator" LastGenOutput="Objects.cs" />
+    <Compile Update="Core\Handles\Objects.cs" DependentUpon="Objects.tt" DesignTime="True" AutoGen="True" />
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" /> <!-- Needed for T4 generation -->
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mendix.LibGit2Sharp.NativeBinaries" Version="[1.110.1]" PrivateAssets="none" />
+    <PackageReference Include="Mendix.LibGit2Sharp.NativeBinaries" Version="[1.110.10]" PrivateAssets="none" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="all" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13" PrivateAssets="all" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.205" PrivateAssets="all" />
   </ItemGroup>
 
   <Import Project="..\Targets\CodeGenerator.targets" />
   <Import Project="..\Targets\GenerateNativeDllName.targets" />
-
-  <Target Name="SetNuSpecProperties" BeforeTargets="GenerateNuspec" DependsOnTargets="GetBuildVersion">
-    <PropertyGroup>
-      <PackageIconUrl>https://raw.githubusercontent.com/mendix/libgit2sharp/master/square-logo.png</PackageIconUrl>
-      <PackageLicenseUrl>https://raw.githubusercontent.com/mendix/libgit2sharp/master/LICENSE.md</PackageLicenseUrl>
-    </PropertyGroup>
-  </Target>
 
 </Project>

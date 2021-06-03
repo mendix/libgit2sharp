@@ -71,20 +71,13 @@ namespace LibGit2Sharp
         /// Returns information related to the current LibGit2Sharp
         /// library.
         /// </summary>
-        public static Version Version
-        {
-            get
-            {
-                return version.Value;
-            }
-        }
+        public static Version Version => version.Value;
 
         /// <summary>
         /// Registers a new <see cref="SmartSubtransport"/> as a custom
-        /// smart-protocol transport with libgit2.  Any Git remote with
+        /// smart-protocol transport with libgit2. Any Git remote with
         /// the scheme registered will delegate to the given transport
-        /// for all communication with the server.  use this transport to communicate
-        /// with the server This is not commonly
+        /// for all communication with the server. This is not commonly
         /// used: some callers may want to re-use an existing connection to
         /// perform fetch / push operations to a remote.
         ///
@@ -166,7 +159,7 @@ namespace LibGit2Sharp
         /// <summary>
         /// Sets a path for loading native binaries on .NET Framework or .NET Core.
         /// When specified, native library will first be searched under the given path.
-        /// On .NET Framework a subdirectory corresponding to the architecture  ("x86" or "x64") is appended,
+        /// On .NET Framework a subdirectory corresponding to the architecture  ("x86", "x64" or "arm64") is appended,
         /// otherwise the native library is expected to be found in the directory as specified.
         ///
         /// If the library is not found it will be searched in standard search paths:
