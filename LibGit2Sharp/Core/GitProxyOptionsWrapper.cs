@@ -32,16 +32,13 @@ namespace LibGit2Sharp.Core
                 opts.Type = GitProxyType.Specified;
             }
 
-            var callbacks = new RemoteCallbacks(proxyOptions.CredentialsProvider, proxyOptions.CertificateCheck);
-            GitCallbacks = callbacks.GenerateCallbacks();
-
-            if (GitCallbacks.acquire_credentials != null)
+            if (proxyOptions.CredentialsProvider != null ||
+                proxyOptions.CertificateCheck != null)
             {
+                var callbacks = new RemoteCallbacks(proxyOptions.CredentialsProvider, proxyOptions.CertificateCheck);
+                GitCallbacks = callbacks.GenerateCallbacks();
+
                 opts.CredentialsCb = GitCallbacks.acquire_credentials;
-            }
-
-            if (GitCallbacks.certificate_check != null)
-            {
                 opts.CertificateCheck = GitCallbacks.certificate_check;
             }
 
