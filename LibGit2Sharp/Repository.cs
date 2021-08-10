@@ -673,7 +673,7 @@ namespace LibGit2Sharp
         /// <returns>The references in the remote repository.</returns>
         public static IEnumerable<Reference> ListRemoteReferences(string url)
         {
-            return ListRemoteReferences(url, null);
+            return ListRemoteReferences(url, null, null);
         }
 
         /// <summary>
@@ -686,13 +686,15 @@ namespace LibGit2Sharp
         /// </para>
         /// <param name="url">The url to list from.</param>
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings.</param>
         /// <returns>The references in the remote repository.</returns>
-        public static IEnumerable<Reference> ListRemoteReferences(string url, CredentialsHandler credentialsProvider)
+        public static IEnumerable<Reference> ListRemoteReferences(string url, CredentialsHandler credentialsProvider, ProxyOptions proxyOptions)
         {
             Ensure.ArgumentNotNull(url, "url");
 
             using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
-            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider))
+            using (GitProxyOptionsWrapper proxyOptionsWrapper = new GitProxyOptionsWrapper(proxyOptions))
+            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider, proxyOptionsWrapper.GitProxyOptions))
             {
                 return Proxy.git_remote_ls(null, remoteHandle);
             }
@@ -703,24 +705,25 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="url">The url to retrieve from.</param>
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings.</param>
         /// <returns>The reference name.</returns>
-        public static string GetRemoteDefaultBranch(string url, CredentialsHandler credentialsProvider)
+        public static string GetRemoteDefaultBranch(string url, CredentialsHandler credentialsProvider, ProxyOptions proxyOptions)
         {
             Ensure.ArgumentNotNull(url, "url");
 
             using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
-            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider))
+            using (GitProxyOptionsWrapper proxyOptionsWrapper = new GitProxyOptionsWrapper(proxyOptions))
+            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider, proxyOptionsWrapper.GitProxyOptions))
             {
                 return Proxy.git_remote_default_branch(remoteHandle);
             }
         }
 
-        private static RemoteHandle ConnectToAnonymousRemote(RepositoryHandle repositoryHandle, string url, CredentialsHandler credentialsProvider)
+        private static RemoteHandle ConnectToAnonymousRemote(RepositoryHandle repositoryHandle, string url, CredentialsHandler credentialsProvider, GitProxyOptions proxyOptions)
         {
             RemoteHandle remoteHandle = Proxy.git_remote_create_anonymous(repositoryHandle, url);
 
             var gitCallbacks = new GitRemoteCallbacks { version = 1 };
-            var proxyOptions = new GitProxyOptions { Version = 1, Type = GitProxyType.Auto };
 
             if (credentialsProvider != null)
             {
@@ -766,7 +769,7 @@ namespace LibGit2Sharp
         /// <returns>The path to the created repository.</returns>
         public static string Clone(string sourceUrl, string workdirPath)
         {
-            return Clone(sourceUrl, workdirPath, null);
+            return Clone(sourceUrl, workdirPath, null, null);
         }
 
         /// <summary>
@@ -782,9 +785,9 @@ namespace LibGit2Sharp
         /// <param name="sourceUrl">URI for the remote repository</param>
         /// <param name="workdirPath">Local path to clone into</param>
         /// <param name="options"><see cref="CloneOptions"/> controlling clone behavior</param>
+        /// <param name="proxy"><see cref="ProxyOptions"/> controlling proxy options</param>
         /// <returns>The path to the created repository.</returns>
-        public static string Clone(string sourceUrl, string workdirPath,
-            CloneOptions options)
+        public static string Clone(string sourceUrl, string workdirPath, CloneOptions options, ProxyOptions proxy)
         {
             Ensure.ArgumentNotNull(sourceUrl, "sourceUrl");
             Ensure.ArgumentNotNull(workdirPath, "workdirPath");
@@ -806,11 +809,12 @@ namespace LibGit2Sharp
 
             using (var checkoutOptionsWrapper = new GitCheckoutOptsWrapper(options))
             using (var fetchOptionsWrapper = new GitFetchOptionsWrapper())
+            using (var proxyOptionsWrapper = new GitProxyOptionsWrapper(proxy))
             {
                 var gitCheckoutOptions = checkoutOptionsWrapper.Options;
 
                 var gitFetchOptions = fetchOptionsWrapper.Options;
-                gitFetchOptions.ProxyOptions = new GitProxyOptions { Version = 1, Type = GitProxyType.Auto };
+                gitFetchOptions.ProxyOptions = proxyOptionsWrapper.GitProxyOptions;
                 gitFetchOptions.RemoteCallbacks = new RemoteCallbacks(options).GenerateCallbacks();
                 if (options.FetchOptions != null && options.FetchOptions.CustomHeaders != null)
                 {
@@ -849,7 +853,7 @@ namespace LibGit2Sharp
                 // Recursively clone submodules if requested.
                 try
                 {
-                    RecursivelyCloneSubmodules(options, clonedRepoPath, 1);
+                    RecursivelyCloneSubmodules(options, clonedRepoPath, 1, proxy);
                 }
                 catch (Exception ex)
                 {
@@ -868,7 +872,8 @@ namespace LibGit2Sharp
         /// <param name="options">Options controlling clone behavior.</param>
         /// <param name="repoPath">Path of the parent repository.</param>
         /// <param name="recursionDepth">The current depth of the recursion.</param>
-        private static void RecursivelyCloneSubmodules(CloneOptions options, string repoPath, int recursionDepth)
+        /// <param name="proxy">Options controlling proxy settings.</param>
+        private static void RecursivelyCloneSubmodules(CloneOptions options, string repoPath, int recursionDepth, ProxyOptions proxy)
         {
             if (options.RecurseSubmodules)
             {
@@ -912,7 +917,7 @@ namespace LibGit2Sharp
                             throw new UserCancelledException("Recursive clone of submodules was cancelled.");
                         }
 
-                        repo.Submodules.Update(sm.Name, updateOptions);
+                        repo.Submodules.Update(sm.Name, updateOptions, proxy);
 
                         OnRepositoryOperationCompleted(options.RepositoryOperationCompleted,
                                                        context);
@@ -926,7 +931,7 @@ namespace LibGit2Sharp
                 // Check submodules to see if they have their own submodules.
                 foreach (string submodule in submodules)
                 {
-                    RecursivelyCloneSubmodules(options, submodule, recursionDepth + 1);
+                    RecursivelyCloneSubmodules(options, submodule, recursionDepth + 1, proxy);
                 }
             }
         }
