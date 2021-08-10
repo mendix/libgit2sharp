@@ -161,9 +161,10 @@ namespace LibGit2Sharp
         /// <param name="url">The url to fetch from</param>
         /// <param name="refspecs">The list of resfpecs to use</param>
         /// <param name="options"><see cref="FetchOptions"/> controlling fetch behavior</param>
-        public virtual void Fetch(string url, IEnumerable<string> refspecs, FetchOptions options)
+        /// <param name="proxy"><see cref="ProxyOptions"/> controlling proxy settings</param>
+        public virtual void Fetch(string url, IEnumerable<string> refspecs, FetchOptions options, ProxyOptions proxy)
         {
-            Fetch(url, refspecs, options, null, null);
+            Fetch(url, refspecs, options, null, proxy);
         }
 
         /// <summary>
@@ -213,12 +214,14 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="branch">The branch to push.</param>
         /// <param name="pushOptions"><see cref="PushOptions"/> controlling push behavior</param>
+        /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings</param>
         /// <exception cref="LibGit2SharpException">Throws if either the Remote or the UpstreamBranchCanonicalName is not set.</exception>
         public virtual void Push(
             Branch branch,
-            PushOptions pushOptions)
+            PushOptions pushOptions,
+            ProxyOptions proxyOptions)
         {
-            Push(new[] { branch }, pushOptions);
+            Push(new[] { branch }, pushOptions, proxyOptions);
         }
 
         /// <summary>
@@ -229,7 +232,7 @@ namespace LibGit2Sharp
         public virtual void Push(
             IEnumerable<Branch> branches)
         {
-            Push(branches, null);
+            Push(branches, null, null);
         }
 
         /// <summary>
@@ -237,10 +240,12 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="branches">The branches to push.</param>
         /// <param name="pushOptions"><see cref="PushOptions"/> controlling push behavior</param>
+        /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings</param>
         /// <exception cref="LibGit2SharpException">Throws if either the Remote or the UpstreamBranchCanonicalName is not set.</exception>
         public virtual void Push(
             IEnumerable<Branch> branches,
-            PushOptions pushOptions)
+            PushOptions pushOptions,
+            ProxyOptions proxyOptions)
         {
             var enumeratedBranches = branches as IList<Branch> ?? branches.ToList();
 
@@ -259,7 +264,7 @@ namespace LibGit2Sharp
                 {
                     Push(remote, string.Format(
                         CultureInfo.InvariantCulture,
-                        "{0}:{1}", branch.CanonicalName, branch.UpstreamBranchCanonicalName), pushOptions);
+                        "{0}:{1}", branch.CanonicalName, branch.UpstreamBranchCanonicalName), pushOptions, proxyOptions);
                 }
             }
         }
@@ -292,11 +297,13 @@ namespace LibGit2Sharp
         /// <param name="objectish">The source objectish to push.</param>
         /// <param name="destinationSpec">The reference to update on the remote.</param>
         /// <param name="pushOptions"><see cref="PushOptions"/> controlling push behavior</param>
+        /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings</param>
         public virtual void Push(
             Remote remote,
             string objectish,
             string destinationSpec,
-            PushOptions pushOptions)
+            PushOptions pushOptions,
+            ProxyOptions proxyOptions)
         {
             Ensure.ArgumentNotNull(objectish, "objectish");
             Ensure.ArgumentNotNullOrEmptyString(destinationSpec, "destinationSpec");
@@ -306,7 +313,8 @@ namespace LibGit2Sharp
                                "{0}:{1}",
                                objectish,
                                destinationSpec),
-                 pushOptions);
+                 pushOptions,
+                 proxyOptions);
         }
 
         /// <summary>
@@ -326,14 +334,16 @@ namespace LibGit2Sharp
         /// <param name="remote">The <see cref="Remote"/> to push to.</param>
         /// <param name="pushRefSpec">The pushRefSpec to push.</param>
         /// <param name="pushOptions"><see cref="PushOptions"/> controlling push behavior</param>
+        /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings</param>
         public virtual void Push(
             Remote remote,
             string pushRefSpec,
-            PushOptions pushOptions)
+            PushOptions pushOptions,
+            ProxyOptions proxyOptions)
         {
             Ensure.ArgumentNotNullOrEmptyString(pushRefSpec, "pushRefSpec");
 
-            Push(remote, new[] { pushRefSpec }, pushOptions, null);
+            Push(remote, new[] { pushRefSpec }, pushOptions, proxyOptions);
         }
 
         /// <summary>
