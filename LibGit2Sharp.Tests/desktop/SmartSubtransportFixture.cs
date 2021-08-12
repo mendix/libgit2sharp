@@ -65,7 +65,7 @@ namespace LibGit2Sharp.Tests
                     // Perform the actual fetch
                     Commands.Fetch(repo, remoteName, new string[0],
                         new FetchOptions { OnUpdateTips = expectedFetchState.RemoteUpdateTipsHandler, TagFetchMode = TagFetchMode.Auto },
-                    null);
+                    null, new ProxyOptions());
 
                     // Verify the expected
                     expectedFetchState.CheckUpdatedReferences(repo);
@@ -118,7 +118,7 @@ namespace LibGit2Sharp.Tests
                     Commands.Fetch(repo, remoteName, new string[0], new FetchOptions {
                         OnUpdateTips = expectedFetchState.RemoteUpdateTipsHandler, TagFetchMode = TagFetchMode.Auto,
                         CredentialsProvider = (_user, _valid, _hostname) => new UsernamePasswordCredentials() { Username = user, Password = pass },
-                    }, null);
+                    }, null, new ProxyOptions());
 
                     // Verify the expected
                     expectedFetchState.CheckUpdatedReferences(repo);
