@@ -18,10 +18,6 @@ namespace LibGit2Sharp
             CertificateCheck = certificateCheck;
         }
 
-        internal RemoteCallbacks(CredentialsHandler credentialsProvider)
-            : this(credentialsProvider, null)
-        { }
-
         internal RemoteCallbacks(PushOptions pushOptions)
         {
             if (pushOptions == null)
