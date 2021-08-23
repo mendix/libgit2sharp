@@ -51,6 +51,11 @@ namespace LibGit2Sharp.Tests.TestHelpers
             return null;
         }
 
+        public static bool PrivateRepoCertificateCheck(Certificate certificate, bool valid, string host)
+        {
+            return true;
+        }
+
         public static string BuildPath()
         {
             string tempPath = null;

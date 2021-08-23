@@ -52,7 +52,7 @@ namespace LibGit2Sharp
         {
             Ensure.ArgumentNotNull(remote, "remote");
 
-            return ListReferencesInternal(remote.Url, null, null);
+            return ListReferencesInternal(remote.Url, null, null, null);
         }
 
         /// <summary>
@@ -66,14 +66,19 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="remote">The <see cref="Remote"/> to list from.</param>
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <param name="certificateCheckHandler">The <see cref="CertificateCheckHandler"/> used to resolve SSL certificate errors.</param>
         /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings</param>
         /// <returns>The references in the <see cref="Remote"/> repository.</returns>
-        public virtual IEnumerable<Reference> ListReferences(Remote remote, CredentialsHandler credentialsProvider, ProxyOptions proxyOptions)
+        public virtual IEnumerable<Reference> ListReferences(
+            Remote remote,
+            CredentialsHandler credentialsProvider,
+            CertificateCheckHandler certificateCheckHandler,
+            ProxyOptions proxyOptions)
         {
             Ensure.ArgumentNotNull(remote, "remote");
             Ensure.ArgumentNotNull(credentialsProvider, "credentialsProvider");
 
-            return ListReferencesInternal(remote.Url, credentialsProvider, proxyOptions);
+            return ListReferencesInternal(remote.Url, credentialsProvider, certificateCheckHandler, proxyOptions);
         }
 
         /// <summary>
@@ -91,7 +96,7 @@ namespace LibGit2Sharp
         {
             Ensure.ArgumentNotNull(url, "url");
 
-            return ListReferencesInternal(url, null, null);
+            return ListReferencesInternal(url, null, null, null);
         }
 
         /// <summary>
@@ -105,17 +110,26 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="url">The url to list from.</param>
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <param name="certificateCheckHandler">The <see cref="CertificateCheckHandler"/> used to resolve SSL certificate errors.</param>
         /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings</param>
         /// <returns>The references in the remote repository.</returns>
-        public virtual IEnumerable<Reference> ListReferences(string url, CredentialsHandler credentialsProvider, ProxyOptions proxyOptions)
+        public virtual IEnumerable<Reference> ListReferences(
+            string url,
+            CredentialsHandler credentialsProvider,
+            CertificateCheckHandler certificateCheckHandler,
+            ProxyOptions proxyOptions)
         {
             Ensure.ArgumentNotNull(url, "url");
             Ensure.ArgumentNotNull(credentialsProvider, "credentialsProvider");
 
-            return ListReferencesInternal(url, credentialsProvider, proxyOptions);
+            return ListReferencesInternal(url, credentialsProvider, certificateCheckHandler, proxyOptions);
         }
 
-        private IEnumerable<Reference> ListReferencesInternal(string url, CredentialsHandler credentialsProvider, ProxyOptions proxyOptions)
+        private IEnumerable<Reference> ListReferencesInternal(
+            string url,
+            CredentialsHandler credentialsProvider,
+            CertificateCheckHandler certificateCheckHandler,
+            ProxyOptions proxyOptions)
         {
             using (RemoteHandle remoteHandle = BuildRemoteHandle(repository.Handle, url))
             using (GitProxyOptionsWrapper proxyOptionsWrapper = new GitProxyOptionsWrapper(proxyOptions))
@@ -125,7 +139,7 @@ namespace LibGit2Sharp
 
                 if (credentialsProvider != null)
                 {
-                    var callbacks = new RemoteCallbacks(credentialsProvider);
+                    var callbacks = new RemoteCallbacks(credentialsProvider, certificateCheckHandler);
                     gitCallbacks = callbacks.GenerateCallbacks();
                 }
 
