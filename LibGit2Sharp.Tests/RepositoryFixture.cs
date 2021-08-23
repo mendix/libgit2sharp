@@ -697,7 +697,7 @@ namespace LibGit2Sharp.Tests
                 "Populate Constants.PrivateRepo* to run this test");
 
             IEnumerable<Reference> references = Repository.ListRemoteReferences(Constants.PrivateRepoUrl,
-                Constants.PrivateRepoCredentials, new ProxyOptions());
+                Constants.PrivateRepoCredentials, Constants.PrivateRepoCertificateCheck, new ProxyOptions());
 
             foreach (var reference in references)
             {

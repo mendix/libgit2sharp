@@ -673,7 +673,7 @@ namespace LibGit2Sharp
         /// <returns>The references in the remote repository.</returns>
         public static IEnumerable<Reference> ListRemoteReferences(string url)
         {
-            return ListRemoteReferences(url, null, null);
+            return ListRemoteReferences(url, null, null, null);
         }
 
         /// <summary>
@@ -686,15 +686,20 @@ namespace LibGit2Sharp
         /// </para>
         /// <param name="url">The url to list from.</param>
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <param name="certificateCheckHandler">The <see cref="CertificateCheckHandler"/> used to resolve SSL certificate errors.</param>
         /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings.</param>
         /// <returns>The references in the remote repository.</returns>
-        public static IEnumerable<Reference> ListRemoteReferences(string url, CredentialsHandler credentialsProvider, ProxyOptions proxyOptions)
+        public static IEnumerable<Reference> ListRemoteReferences(
+            string url,
+            CredentialsHandler credentialsProvider,
+            CertificateCheckHandler certificateCheckHandler,
+            ProxyOptions proxyOptions)
         {
             Ensure.ArgumentNotNull(url, "url");
 
             using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
             using (GitProxyOptionsWrapper proxyOptionsWrapper = new GitProxyOptionsWrapper(proxyOptions))
-            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider, proxyOptionsWrapper.GitProxyOptions))
+            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider, certificateCheckHandler, proxyOptionsWrapper.GitProxyOptions))
             {
                 return Proxy.git_remote_ls(null, remoteHandle);
             }
@@ -705,21 +710,31 @@ namespace LibGit2Sharp
         /// </summary>
         /// <param name="url">The url to retrieve from.</param>
         /// <param name="credentialsProvider">The <see cref="Func{Credentials}"/> used to connect to remote repository.</param>
+        /// <param name="certificateCheckHandler">The <see cref="CertificateCheckHandler"/> used to resolve SSL certificate errors.</param>
         /// <param name="proxyOptions"><see cref="ProxyOptions"/> controlling proxy settings.</param>
         /// <returns>The reference name.</returns>
-        public static string GetRemoteDefaultBranch(string url, CredentialsHandler credentialsProvider, ProxyOptions proxyOptions)
+        public static string GetRemoteDefaultBranch(
+            string url,
+            CredentialsHandler credentialsProvider,
+            CertificateCheckHandler certificateCheckHandler,
+            ProxyOptions proxyOptions)
         {
             Ensure.ArgumentNotNull(url, "url");
 
             using (RepositoryHandle repositoryHandle = Proxy.git_repository_new())
             using (GitProxyOptionsWrapper proxyOptionsWrapper = new GitProxyOptionsWrapper(proxyOptions))
-            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider, proxyOptionsWrapper.GitProxyOptions))
+            using (RemoteHandle remoteHandle = ConnectToAnonymousRemote(repositoryHandle, url, credentialsProvider, certificateCheckHandler, proxyOptionsWrapper.GitProxyOptions))
             {
                 return Proxy.git_remote_default_branch(remoteHandle);
             }
         }
 
-        private static RemoteHandle ConnectToAnonymousRemote(RepositoryHandle repositoryHandle, string url, CredentialsHandler credentialsProvider, GitProxyOptions proxyOptions)
+        private static RemoteHandle ConnectToAnonymousRemote(
+            RepositoryHandle repositoryHandle,
+            string url,
+            CredentialsHandler credentialsProvider,
+            CertificateCheckHandler certificateCheckHandler,
+            GitProxyOptions proxyOptions)
         {
             RemoteHandle remoteHandle = Proxy.git_remote_create_anonymous(repositoryHandle, url);
 
@@ -727,7 +742,7 @@ namespace LibGit2Sharp
 
             if (credentialsProvider != null)
             {
-                var callbacks = new RemoteCallbacks(credentialsProvider);
+                var callbacks = new RemoteCallbacks(credentialsProvider, certificateCheckHandler);
                 gitCallbacks = callbacks.GenerateCallbacks();
             }
 
