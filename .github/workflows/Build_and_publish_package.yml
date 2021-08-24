@@ -1,19 +1,14 @@
 name: Build and Deploy Packages
 
 on:
+  pull_request:
   push:
     branches:
-      - mendix/releases
-
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
+      - main
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
+    # Currently we build LibGit2Sharp for Windows only
     # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
     runs-on: windows-2019
 
@@ -40,6 +35,7 @@ jobs:
     # After build we copy the binaries to package output folder
     # Finally we pack and push the package to github packages
     - name: Deploy Package
+      if: github.event_name == 'push'
       run: |
         dotnet nuget add source "https://nuget.pkg.github.com/mendix/index.json" --name "GitHub" --username ${{ secrets.GHPACKAGESUSER }} --password ${{ secrets.GHPACKAGESTOKEN }}
         dotnet nuget push "**/mx_nuget/Mendix.LibGit2Sharp*.nupkg" --source "GitHub" --skip-duplicate
