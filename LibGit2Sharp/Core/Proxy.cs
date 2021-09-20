@@ -2164,6 +2164,7 @@ namespace LibGit2Sharp.Core
             catch (Exception)
             {
                 customHeaders.Dispose();
+                throw;
             }
         }
 
