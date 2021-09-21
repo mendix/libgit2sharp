@@ -35,7 +35,7 @@ jobs:
     # After build we copy the binaries to package output folder
     # Finally we pack and push the package to github packages
     - name: Deploy Package
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         dotnet nuget add source "https://nuget.pkg.github.com/mendix/index.json" --name "GitHub" --username ${{ secrets.GHPACKAGESUSER }} --password ${{ secrets.GHPACKAGESTOKEN }}
         dotnet nuget push "**/mx_nuget/Mendix.LibGit2Sharp*.nupkg" --source "GitHub" --skip-duplicate
