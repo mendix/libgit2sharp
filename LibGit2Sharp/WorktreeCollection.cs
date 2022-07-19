@@ -66,7 +66,8 @@ namespace LibGit2Sharp
             git_worktree_add_options options = new git_worktree_add_options
             {
                 version = 1,
-                locked = Convert.ToInt32(isLocked)
+                locked = Convert.ToInt32(isLocked),
+                checkout_options = new GitCheckoutOpts { version = 1 },
             };
 
             using (var handle = Proxy.git_worktree_add(repo.Handle, name, path, options))
@@ -99,7 +100,8 @@ namespace LibGit2Sharp
             git_worktree_add_options options = new git_worktree_add_options
             {
                 version = 1,
-                locked = Convert.ToInt32(isLocked)
+                locked = Convert.ToInt32(isLocked),
+                checkout_options = new GitCheckoutOpts { version = 1 },
             };
 
             using (var handle = Proxy.git_worktree_add(repo.Handle, name, path, options))
