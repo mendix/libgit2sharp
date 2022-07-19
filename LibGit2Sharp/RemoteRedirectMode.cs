@@ -12,17 +12,17 @@
         /// Do not follow any off-site redirects at any stage of
         /// the fetch or push.
         /// </summary>
-        None = 0, // GIT_REMOTE_REDIRECT_NONE
+        None = (1 << 0), // GIT_REMOTE_REDIRECT_NONE
 
         /// <summary>
         /// Allow off-site redirects only upon the initial
         /// request. This is the default.
         /// </summary>
-        Auto,     // GIT_REMOTE_REDIRECT_INITIAL
+        Auto = (1 << 1), // GIT_REMOTE_REDIRECT_INITIAL
 
         /// <summary>
         /// Allow redirects at any stage in the fetch or push.
         /// </summary>
-        All       // GIT_REMOTE_REDIRECT_ALL
+        All = (1 << 2), // GIT_REMOTE_REDIRECT_ALL
     }
 }
