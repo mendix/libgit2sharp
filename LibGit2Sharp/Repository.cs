@@ -1597,6 +1597,11 @@ namespace LibGit2Sharp
                 treeFlags |= GitMergeFlag.GIT_MERGE_SKIP_REUC;
             }
 
+            if (options.NoRecursive)
+            {
+                treeFlags |= GitMergeFlag.GIT_MERGE_NO_RECURSIVE;
+            }
+
             var fileFlags = options.IgnoreWhitespaceChange
                 ? GitMergeFileFlag.GIT_MERGE_FILE_IGNORE_WHITESPACE_CHANGE
                 : GitMergeFileFlag.GIT_MERGE_FILE_DEFAULT;
