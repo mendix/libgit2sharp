@@ -2184,6 +2184,12 @@ namespace LibGit2Sharp.Core
             using (var buf = new GitBuf())
             {
                 int res = NativeMethods.git_remote_default_branch(buf, remote);
+
+                if (res == (int)GitErrorCode.NotFound)
+                {
+                    return null;
+                }
+
                 Ensure.ZeroResult(res);
 
                 return LaxUtf8Marshaler.FromNative(buf.ptr);
