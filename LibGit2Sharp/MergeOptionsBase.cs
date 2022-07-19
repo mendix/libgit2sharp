@@ -36,6 +36,12 @@
         public bool SkipReuc { get; set; }
 
         /// <summary>
+        /// If the commits being merged have multiple merge bases, do not build a recursive
+        /// merge base (by merging the multiple merge bases), instead simply use the first base.
+        /// </summary>
+        public bool NoRecursive { get; set; }
+
+        /// <summary>
         /// Similarity to consider a file renamed.
         /// </summary>
         public int RenameThreshold;

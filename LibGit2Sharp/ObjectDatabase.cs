@@ -575,6 +575,7 @@ namespace LibGit2Sharp
                 modifiedOptions.FailOnConflict = options.FailOnConflict;
                 modifiedOptions.FindRenames = options.FindRenames;
                 modifiedOptions.MergeFileFavor = options.MergeFileFavor;
+                modifiedOptions.NoRecursive = options.NoRecursive;
                 modifiedOptions.RenameThreshold = options.RenameThreshold;
                 modifiedOptions.TargetLimit = options.TargetLimit;
             }
@@ -768,6 +769,7 @@ namespace LibGit2Sharp
                 modifiedOptions.FindRenames = options.FindRenames;
                 modifiedOptions.IgnoreWhitespaceChange = options.IgnoreWhitespaceChange;
                 modifiedOptions.MergeFileFavor = options.MergeFileFavor;
+                modifiedOptions.NoRecursive = options.NoRecursive;
                 modifiedOptions.RenameThreshold = options.RenameThreshold;
                 modifiedOptions.TargetLimit = options.TargetLimit;
             }
@@ -923,6 +925,10 @@ namespace LibGit2Sharp
             {
                 mergeFlags |= GitMergeFlag.GIT_MERGE_FAIL_ON_CONFLICT;
             }
+            if (options.NoRecursive)
+            {
+                mergeFlags |= GitMergeFlag.GIT_MERGE_NO_RECURSIVE;
+            }
 
             var mergeOptions = new GitMergeOpts
             {
@@ -963,6 +969,10 @@ namespace LibGit2Sharp
             if (options.FailOnConflict)
             {
                 mergeFlags |= GitMergeFlag.GIT_MERGE_FAIL_ON_CONFLICT;
+            }
+            if (options.NoRecursive)
+            {
+                mergeFlags |= GitMergeFlag.GIT_MERGE_NO_RECURSIVE;
             }
 
             var mergeOptions = new GitMergeOpts
