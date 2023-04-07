@@ -143,12 +143,13 @@ namespace LibGit2Sharp.Core
             else
             {
                 errorMessage = LaxUtf8Marshaler.FromNative(error->Message);
+                errorCategory = error->Category;
             }
 
             Func<string, GitErrorCategory, LibGit2SharpException> exceptionBuilder;
             if (!GitErrorsToLibGit2SharpExceptions.TryGetValue((GitErrorCode)result, out exceptionBuilder))
             {
-                exceptionBuilder = (m, c) => new LibGit2SharpException(m, c);
+                exceptionBuilder = (m, c) => new LibGit2SharpException(m, (GitErrorCode)result, c);
             }
 
             throw exceptionBuilder(errorMessage, errorCategory);
