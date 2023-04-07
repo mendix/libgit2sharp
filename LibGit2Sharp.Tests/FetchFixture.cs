@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LibGit2Sharp.Core;
 using LibGit2Sharp.Tests.TestHelpers;
 using Xunit;
 
@@ -251,7 +252,8 @@ namespace LibGit2Sharp.Tests
             var options = new FetchOptions { CustomHeaders = new String[] { knownHeader } };
             using (var repo = new Repository(clonedRepoPath))
             {
-                Assert.Throws<LibGit2SharpException>(() => Commands.Fetch(repo, "origin", new string[0], options, null, new ProxyOptions()));
+                var ex = Assert.Throws<LibGit2SharpException>(() => Commands.Fetch(repo, "origin", new string[0], options, null, new ProxyOptions()));
+                Assert.Equal(GitErrorCategory.Invalid, ex.Category);
             }
         }
 
