@@ -1,6 +1,6 @@
-namespace LibGit2Sharp.Core
+﻿namespace LibGit2Sharp
 {
-    internal enum GitErrorCategory
+    public enum GitErrorCategory
     {
         Unknown = -1,
         None,
@@ -36,6 +36,8 @@ namespace LibGit2Sharp.Core
         Filesystem,
         Patch,
         Worktree,
-        Sha1
+        Sha1,
+        Http,
+        Internal
     }
 }
